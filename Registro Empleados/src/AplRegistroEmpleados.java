@@ -85,24 +85,26 @@ public class AplRegistroEmpleados {
 		return empleado;
 	}
 	
-/*	private void ordenarListaPorCriterio(Lista<Empleado> empleados, int lowerIndex, int higherIndex) {
+	private void ordenarListaPorCriterio(ListaDBL<Empleado> empleados, int lowerIndex, int higherIndex) {
 		int i = lowerIndex;
         int j = higherIndex;
         // calculate pivot number, I am taking pivot as middle index number
         int pivot = lowerIndex+(higherIndex-lowerIndex)/2;
-        Nodo<Empleado> nodoPivote = empleados.getFrente(), nodoIzq= empleados.getFrente(), nodoDer=empleados.getFin();
+        NodoDBL<Empleado> nodoPivote = empleados.getFrente(), nodoIzq= empleados.getFrente(), nodoDer=empleados.getFin();
+        for(int it = 0; it<pivot -1; nodoPivote = nodoPivote.getSig(), it++);
         // Divide into two arrays
         while (i <= j) {
         	
-            while (nodoIzq.toString().compareToIgnoreCase(nodoPivote.toString()) < 0) {
+            while (nodoIzq.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) < 0) {
                 i++;
                 nodoIzq = nodoIzq.getSig();
             }
-            while (array[j] > pivot) {
+            while (nodoDer.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) > 0) {
                 j--;
+                nodoDer = nodoDer.getAnt();
             }
             if (i <= j) {
-                exchangeNumbers(i, j);
+                exchangeNumbers(nodoIzq, nodoDer);
                 //move index to next position on both sides
                 i++;
                 j--;
@@ -114,6 +116,12 @@ public class AplRegistroEmpleados {
         if (i < higherIndex)
         	ordenarListaPorCriterio(empleados, i, higherIndex);
 		
-	}*/
+	}
+	
+	  private void exchangeNumbers(NodoDBL<Empleado> izq, NodoDBL<Empleado> der) {
+		  NodoDBL<Empleado> aux = izq;
+		  izq = der;
+		  der = aux;
+	  }
 
 }
