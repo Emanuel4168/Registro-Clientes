@@ -5,9 +5,9 @@ public class AplRegistroEmpleados {
 	private class Empleado{
 		public String nombre;
 		public byte edad;
-		public float estatura;
+		public int estatura;
 		
-		public Empleado(String nombre, byte edad, float estatura) {
+		public Empleado(String nombre, byte edad, int estatura) {
 			this.nombre = nombre;
 			this.edad = edad; 
 			this.estatura = estatura;
@@ -15,13 +15,13 @@ public class AplRegistroEmpleados {
 		
 		public String toString() {
 			if(criterioOrdenamiento == 1)
-				return nombre;
+				return Rutinas.PonBlancos(nombre, 30);
 			if(criterioOrdenamiento == 2)
-				return Rutinas.PonCeros(edad,3);
+				return Rutinas.PonCeros(edad,4);
 			if(criterioOrdenamiento == 3)
-				return Rutinas.PonBlancos(""+estatura,3);
+				return Rutinas.PonCeros(estatura,4);
 			
-			return Rutinas.PonCeros(edad,3) + Rutinas.PonBlancos(""+estatura, 3)+ Rutinas.PonBlancos(nombre, 30);
+			return Rutinas.PonCeros(edad,4) + Rutinas.PonCeros(estatura, 4)+ Rutinas.PonBlancos(nombre, 30);
 		}
 		
 	}
@@ -39,9 +39,13 @@ public class AplRegistroEmpleados {
 			
 			switch(opcion) {
 			case 1:
+				int criterioAnterior = criterioOrdenamiento;
 				displaySubMenu();
 				criterioOrdenamiento = scan.nextByte();
 				scan.nextLine();
+				
+				if(criterioAnterior != criterioOrdenamiento)
+					ordenarListaPorCriterio(empleados,1,empleados.Length());
 				break;
 				
 			case 2:
@@ -49,6 +53,7 @@ public class AplRegistroEmpleados {
 				break;
 				
 			case 3: 
+				imprimirEmpleados(empleados);
 				break;
 			}
 		}
@@ -74,12 +79,13 @@ public class AplRegistroEmpleados {
 	private Empleado guardarEmpleado(Scanner scan) {
 		Empleado empleado = new Empleado("",(byte) 0,0);
 		System.out.println("Nombre:");
+		scan.nextLine();
 		empleado.nombre = scan.nextLine();
 		System.out.println("Edad:");
 		empleado.edad = scan.nextByte();
 		scan.nextLine();
 		System.out.println("Estatura:");
-		empleado.estatura = scan.nextFloat();
+		empleado.estatura = scan.nextInt();
 		scan.nextLine();
 		
 		return empleado;
@@ -91,7 +97,13 @@ public class AplRegistroEmpleados {
         // calculate pivot number, I am taking pivot as middle index number
         int pivot = lowerIndex+(higherIndex-lowerIndex)/2;
         NodoDBL<Empleado> nodoPivote = empleados.getFrente(), nodoIzq= empleados.getFrente(), nodoDer=empleados.getFin();
-        for(int it = 0; it<pivot -1; nodoPivote = nodoPivote.getSig(), it++);
+        
+        for(int it = 1 ; it < pivot; it++)
+        	nodoPivote = nodoPivote.getSig();
+        for(int it = 1 ; it < i; it++)
+        	nodoIzq = nodoIzq.getSig();
+        for(int it = empleados.Length(); it > j; it--)
+        	nodoDer = nodoDer.getAnt();
         // Divide into two arrays
         while (i <= j) {
         	
@@ -104,13 +116,14 @@ public class AplRegistroEmpleados {
                 nodoDer = nodoDer.getAnt();
             }
             if (i <= j) {
-                exchangeNumbers(nodoIzq, nodoDer);
+                intercambiarNodos(nodoIzq, nodoDer);
                 //move index to next position on both sides
                 i++;
                 j--;
             }
         }
-        // call quickSort() method recursively
+        //System.out.println("XXXXXXXXX");
+        // call quickSort method recursively
         if (lowerIndex < j)
         	ordenarListaPorCriterio(empleados, lowerIndex, j);
         if (i < higherIndex)
@@ -118,10 +131,19 @@ public class AplRegistroEmpleados {
 		
 	}
 	
-	  private void exchangeNumbers(NodoDBL<Empleado> izq, NodoDBL<Empleado> der) {
-		  NodoDBL<Empleado> aux = izq;
-		  izq = der;
-		  der = aux;
+	  private void intercambiarNodos(NodoDBL<Empleado> izq, NodoDBL<Empleado> der) {
+		  System.out.println("XXXXXXXXX");
+		  Empleado aux = new Empleado(izq.Info.nombre, izq.Info.edad, izq.Info.estatura);
+		  izq.Info = der.Info;
+		  der.Info = aux;
+	  }
+	  
+	  private void imprimirEmpleados(ListaDBL<Empleado> empleados) {
+		  NodoDBL<Empleado> empleadoActual = empleados.getFrente();
+		  while(empleadoActual != null) {
+			  System.out.println(empleadoActual.Info.nombre+"\t"+empleadoActual.Info.edad+"\t"+empleadoActual.Info.estatura);
+			  empleadoActual = empleadoActual.getSig();
+		  }
 	  }
 
 }
