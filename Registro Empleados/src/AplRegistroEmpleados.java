@@ -45,7 +45,7 @@ public class AplRegistroEmpleados {
 				scan.nextLine();
 				
 				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) {
-					ordenarListaPorCriterio(empleados,0, empleados.Length());
+					ordenarListaPorCriterio(empleados,1, empleados.Length());
 				}
 				break;
 				
@@ -131,7 +131,9 @@ public class AplRegistroEmpleados {
                 intercambiarNodos(nodoIzq, nodoDer);
                 //move index to next position on both sides
                 i++;
+                nodoIzq.getSig();
                 j--;
+                nodoDer.getAnt();
             }
         }while (i <= j);
         
