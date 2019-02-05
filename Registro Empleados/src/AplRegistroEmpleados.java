@@ -31,7 +31,7 @@ public class AplRegistroEmpleados {
 	public AplRegistroEmpleados() {
 		Scanner scan = new Scanner(System.in);
 		ListaDBL<Empleado> empleados = new ListaDBL<>();
-		byte opcion = 1;
+		byte opcion = 1, criterioAnterior = 0;
 		
 		while(opcion != 0) {
 			displayMainMenu();
@@ -39,13 +39,14 @@ public class AplRegistroEmpleados {
 			
 			switch(opcion) {
 			case 1:
-				int criterioAnterior = criterioOrdenamiento;
+				criterioAnterior = criterioOrdenamiento;
 				displaySubMenu();
 				criterioOrdenamiento = scan.nextByte();
 				scan.nextLine();
 				
-				if(criterioAnterior != criterioOrdenamiento)
-					ordenarListaPorCriterio(empleados,1,empleados.Length());
+				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) {
+					ordenarListaPorCriterio(empleados,0, empleados.Length());
+				}
 				break;
 				
 			case 2:
@@ -54,6 +55,17 @@ public class AplRegistroEmpleados {
 				
 			case 3: 
 				imprimirEmpleados(empleados);
+				break;
+				
+			case 4:
+				criterioAnterior = criterioOrdenamiento;
+				displaySubMenu();
+				criterioOrdenamiento = scan.nextByte();
+				scan.nextLine();
+				
+				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) {
+					ordenarListaPorCriterio2(empleados, empleados.getFrente() ,empleados.getFin(), 1 , empleados.Length()-1);
+				}
 				break;
 			}
 		}
@@ -64,16 +76,16 @@ public class AplRegistroEmpleados {
 	}
 	
 	private void displayMainMenu() {
-		System.out.println("1.Elegir criterio de ordenamiento\n"+
+		System.out.println("\n1.Elegir criterio de ordenamiento\n"+
 						 "2.Capturar empleado\n"+
-				         "3.Consultar");
+				         "3.Consultar\n");
 	}
 	
 	private void displaySubMenu() {
-		System.out.println("1.Nombre\n"+
+		System.out.println("\n1.Nombre\n"+
 				 "2.Edad\n"+
 		         "3.Estatura\n"+
-				 "4.Edad-Estatura-Nombre");
+				 "4.Edad-Estatura-Nombre\n");
 	}
 	
 	private Empleado guardarEmpleado(Scanner scan) {
@@ -94,7 +106,7 @@ public class AplRegistroEmpleados {
 	private void ordenarListaPorCriterio(ListaDBL<Empleado> empleados, int lowerIndex, int higherIndex) {
 		int i = lowerIndex;
         int j = higherIndex;
-        // calculate pivot number, I am taking pivot as middle index number
+        
         int pivot = lowerIndex+(higherIndex-lowerIndex)/2;
         NodoDBL<Empleado> nodoPivote = empleados.getFrente(), nodoIzq= empleados.getFrente(), nodoDer=empleados.getFin();
         
@@ -104,15 +116,15 @@ public class AplRegistroEmpleados {
         	nodoIzq = nodoIzq.getSig();
         for(int it = empleados.Length(); it > j; it--)
         	nodoDer = nodoDer.getAnt();
-        // Divide into two arrays
-        while (i <= j) {
+        
+        do {
         	
-            while (nodoIzq.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) < 0) {
-                i++;
+            while (nodoIzq.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) < 0 && i < higherIndex) {
+            	i++;
                 nodoIzq = nodoIzq.getSig();
             }
-            while (nodoDer.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) > 0) {
-                j--;
+            while (nodoDer.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) > 0 && j > lowerIndex) {
+            	j--;
                 nodoDer = nodoDer.getAnt();
             }
             if (i <= j) {
@@ -121,20 +133,58 @@ public class AplRegistroEmpleados {
                 i++;
                 j--;
             }
-        }
-        //System.out.println("XXXXXXXXX");
-        // call quickSort method recursively
-        if (lowerIndex < j)
+        }while (i <= j);
+        
+        if (lowerIndex < j) 
         	ordenarListaPorCriterio(empleados, lowerIndex, j);
-        if (i < higherIndex)
+        if (i < higherIndex) 
         	ordenarListaPorCriterio(empleados, i, higherIndex);
 		
 	}
 	
+	private void ordenarListaPorCriterio2(ListaDBL<Empleado> empleados, NodoDBL<Empleado> lower, NodoDBL<Empleado> higher, int lowerIndex, int higherIndex) {
+		int i = lowerIndex;
+        int j = higherIndex;
+		
+		NodoDBL<Empleado> nodoIzq = lower;
+		NodoDBL<Empleado> nodoDer = higher;
+        
+		int pivot = lowerIndex+(higherIndex-lowerIndex)/2;
+        NodoDBL<Empleado> nodoPivote = empleados.getFrente();
+        
+        for(int it = 1 ; it < pivot; it++)
+        	nodoPivote = nodoPivote.getSig();
+        
+        do {
+        	
+            while (nodoIzq.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) < 0 && i < higherIndex) {
+                nodoIzq = nodoIzq.getSig();
+                i++;
+            }
+    
+            while (nodoDer.Info.toString().compareToIgnoreCase(nodoPivote.Info.toString()) > 0 && j > lowerIndex) {
+                nodoDer = nodoDer.getAnt();
+                j--;
+            }
+            
+            if (i <= j) {
+                intercambiarNodos(nodoIzq, nodoDer);
+                //move index to next position on both sides
+                i++;
+                j--;
+            }
+        }while (i <= j);
+        
+        if (lowerIndex < j) 
+        	ordenarListaPorCriterio2(empleados,lower, nodoDer, lowerIndex, j);
+        if (i < higherIndex) 
+        	ordenarListaPorCriterio2(empleados, nodoIzq, higher, i, higherIndex);
+		
+	}
+	
 	  private void intercambiarNodos(NodoDBL<Empleado> izq, NodoDBL<Empleado> der) {
-		  System.out.println("XXXXXXXXX");
-		  Empleado aux = new Empleado(izq.Info.nombre, izq.Info.edad, izq.Info.estatura);
-		  izq.Info = der.Info;
+		  Empleado aux = izq.Info; //new Empleado(izq.Info.nombre, izq.Info.edad, izq.Info.estatura);
+		  izq.Info = der.Info;//new Empleado(der.Info.nombre, der.Info.edad, der.Info.estatura);;
 		  der.Info = aux;
 	  }
 	  
@@ -144,6 +194,8 @@ public class AplRegistroEmpleados {
 			  System.out.println(empleadoActual.Info.nombre+"\t"+empleadoActual.Info.edad+"\t"+empleadoActual.Info.estatura);
 			  empleadoActual = empleadoActual.getSig();
 		  }
+		  System.out.println();
 	  }
+	  
 
 }
