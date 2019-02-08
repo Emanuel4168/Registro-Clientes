@@ -4,10 +4,10 @@ public class AplRegistroEmpleados {
 	
 	private class Empleado{
 		public String nombre;
-		public byte edad;
+		public int edad;
 		public int estatura;
 		
-		public Empleado(String nombre, byte edad, int estatura) {
+		public Empleado(String nombre, int edad, int estatura) {
 			this.nombre = nombre;
 			this.edad = edad; 
 			this.estatura = estatura;
@@ -26,26 +26,26 @@ public class AplRegistroEmpleados {
 		
 	}
 	
-	private static byte criterioOrdenamiento = 1; 
+	private static int criterioOrdenamiento = 1; 
 	
 	public AplRegistroEmpleados() {
 		Scanner scan = new Scanner(System.in);
 		ListaDBL<Empleado> empleados = new ListaDBL<>();
-		byte opcion = 1, criterioAnterior = 0;
+		int opcion = 1, criterioAnterior = 0;
 		
 		while(opcion != 0) {
 			displayMainMenu();
-			opcion = scan.nextByte();
+			opcion = scan.nextInt();
 			
 			switch(opcion) {
 			case 1:
 				criterioAnterior = criterioOrdenamiento;
 				displaySubMenu();
-				criterioOrdenamiento = scan.nextByte();
+				criterioOrdenamiento = scan.nextInt();
 				scan.nextLine();
 				
 				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) {
-					ordenarListaPorCriterio(empleados,1, empleados.Length());
+					ordenarListaPorCriterio2(empleados, empleados.getFrente() ,empleados.getFin(), 1 , empleados.Length());
 				}
 				break;
 				
@@ -60,13 +60,11 @@ public class AplRegistroEmpleados {
 			case 4:
 				criterioAnterior = criterioOrdenamiento;
 				displaySubMenu();
-				criterioOrdenamiento = scan.nextByte();
+				criterioOrdenamiento = scan.nextInt();
 				scan.nextLine();
 				
-				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) {
-					ordenarListaPorCriterio2(empleados, empleados.getFrente() ,empleados.getFin(), 1 , empleados.Length()-1);
-				}
-				break;
+				if(criterioAnterior != criterioOrdenamiento && empleados.Length() > 0) 
+					ordenarListaPorCriterio(empleados, 1, empleados.Length());
 			}
 		}
 	}
@@ -89,12 +87,12 @@ public class AplRegistroEmpleados {
 	}
 	
 	private Empleado guardarEmpleado(Scanner scan) {
-		Empleado empleado = new Empleado("",(byte) 0,0);
+		Empleado empleado = new Empleado("", 0,0);
 		System.out.println("Nombre:");
 		scan.nextLine();
 		empleado.nombre = scan.nextLine();
 		System.out.println("Edad:");
-		empleado.edad = scan.nextByte();
+		empleado.edad = scan.nextInt();
 		scan.nextLine();
 		System.out.println("Estatura:");
 		empleado.estatura = scan.nextInt();
@@ -173,7 +171,9 @@ public class AplRegistroEmpleados {
                 intercambiarNodos(nodoIzq, nodoDer);
                 //move index to next position on both sides
                 i++;
+                nodoIzq = nodoIzq.getSig();
                 j--;
+                nodoDer = nodoDer.getAnt();
             }
         }while (i <= j);
         
@@ -193,7 +193,7 @@ public class AplRegistroEmpleados {
 	  private void imprimirEmpleados(ListaDBL<Empleado> empleados) {
 		  NodoDBL<Empleado> empleadoActual = empleados.getFrente();
 		  while(empleadoActual != null) {
-			  System.out.println(empleadoActual.Info.nombre+"\t"+empleadoActual.Info.edad+"\t"+empleadoActual.Info.estatura);
+			  System.out.println("Nombre: "+empleadoActual.Info.nombre+"\t"+"Edad: "+empleadoActual.Info.edad+"\t"+"Estatura: "+empleadoActual.Info.estatura);
 			  empleadoActual = empleadoActual.getSig();
 		  }
 		  System.out.println();
